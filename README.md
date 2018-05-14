@@ -1,2 +1,2 @@
 # tokenisation-poc
-proof of concept sketches for tokenising data
+Proof of concept sketches for working on tokenising data

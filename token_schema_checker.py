@@ -1,6 +1,8 @@
-import os
+from os import listdir
+from os.path import isfile, join
 import configparser
 import argparse
+import json
 
 
 search_terms = {}
@@ -50,6 +52,19 @@ def main():
 
     command_args = parse_args()
     print('Looking in folder ({folder_name}) for tokenisable values'.format(folder_name = command_args['folder']))
+
+
+    file_names = [f for f in listdir(DEFAULT_FOLDER_NAME) if isfile(join(DEFAULT_FOLDER_NAME, f))]
+
+    for file_name in file_names:
+        key_name = DEFAULT_FOLDER_NAME + file_name
+        print('Checking file {}'.format(key_name))
+        with open(key_name) as json_data:
+            d = json.load(json_data)
+            print(d)
+
+
+
 
 
 if __name__ == "__main__":

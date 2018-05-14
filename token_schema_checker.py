@@ -3,6 +3,8 @@ from os.path import isfile, join
 import configparser
 import argparse
 import json
+from pprint import pprint
+
 
 
 search_terms = {}
@@ -61,7 +63,13 @@ def main():
         print('Checking file {}'.format(key_name))
         with open(key_name) as json_data:
             d = json.load(json_data)
-            print(d)
+            print(d['eventName'])
+            print(d['productName'])
+            print(d['version'])
+            print(d['structure'])
+            # TODO: parse structure for words here
+
+
 
 
 

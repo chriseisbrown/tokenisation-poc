@@ -6,7 +6,6 @@ import json
 from pprint import pprint
 
 
-
 search_terms = {}
 KEY_WORDS = 'search_words'
 DEFAULT_FOLDER_NAME = 'data/'
@@ -58,7 +57,10 @@ def main():
     print('Looking in folder ({folder_name}) for tokenisable values'.format(folder_name = command_args['folder']))
 
     file_names = [f for f in listdir(DEFAULT_FOLDER_NAME) if isfile(join(DEFAULT_FOLDER_NAME, f))]
+    total_files = len(file_names)
+    print('Found {} files to check'.format(total_files))
 
+    found_count = 0
     for file_name in file_names:
         key_name = DEFAULT_FOLDER_NAME + file_name
         print('Checking file {}'.format(key_name))
@@ -71,12 +73,13 @@ def main():
             payload = json.dumps(schema['structure'])
             if any(keyword in payload.lower() for keyword in key_words):
                 print('Found keyword in schema!')
+                found_count += 1
                 # tell me the specific key word found
                 for keyword in key_words:
                     if keyword in payload.lower():
                         print('Found {}'.format(keyword))
 
-
+    print('Found keywords in {} of {} files'.format(found_count, total_files))
 if __name__ == "__main__":
     main()
 

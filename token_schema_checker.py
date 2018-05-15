@@ -8,6 +8,7 @@ from pprint import pprint
 
 
 search_terms = {}
+KEY_WORDS = 'search_words'
 DEFAULT_FOLDER_NAME = 'data/'
 
 
@@ -49,12 +50,12 @@ def main():
     for key in search_terms:
         print(key)
 
-    print(search_terms['words'])
-    print(search_terms['attempts'])
+    key_words = search_terms[KEY_WORDS]
+    print('Looking for these words: {}'.format(key_words))
+    key_words = key_words.split(',')
 
     command_args = parse_args()
     print('Looking in folder ({folder_name}) for tokenisable values'.format(folder_name = command_args['folder']))
-
 
     file_names = [f for f in listdir(DEFAULT_FOLDER_NAME) if isfile(join(DEFAULT_FOLDER_NAME, f))]
 
@@ -62,17 +63,18 @@ def main():
         key_name = DEFAULT_FOLDER_NAME + file_name
         print('Checking file {}'.format(key_name))
         with open(key_name) as json_data:
-            d = json.load(json_data)
-            print(d['eventName'])
-            print(d['productName'])
-            print(d['version'])
-            print(d['structure'])
-            # TODO: parse structure for words here
+            schema = json.load(json_data)
 
+            print('Product is {}, version {}'.format(schema['productName'], schema['version']))
 
-
-
-
+            # check if "body" (lowercased) contains any of the keywords
+            payload = json.dumps(schema['structure'])
+            if any(keyword in payload.lower() for keyword in key_words):
+                print('Found keyword in schema!')
+                # tell me the specific key word found
+                for keyword in key_words:
+                    if keyword in payload.lower():
+                        print('Found {}'.format(keyword))
 
 
 if __name__ == "__main__":

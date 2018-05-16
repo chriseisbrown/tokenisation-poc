@@ -2,6 +2,7 @@
 import os
 import boto3
 import botocore
+import shutil
 
 """
 Module Docstring
@@ -23,6 +24,9 @@ def main():
     """
     session = boto3.Session(profile_name=AWS_PROFILE_NAME )
     s3 = session.resource('s3')
+
+    # clear out existing directory of schemas
+    flush_out(LOCAL_PATH + S3_OBJECT_PREFIX)
 
     my_bucket = s3.Bucket(S3_BUCKET_NAME)
 
@@ -66,6 +70,9 @@ def make_directory(dir_name):
             os.makedirs(dir_name)
     except OSError as e:
         print(e)
+
+def flush_out(dir_name):
+    shutil.rmtree(dir_name)
 
 
 if __name__ == "__main__":

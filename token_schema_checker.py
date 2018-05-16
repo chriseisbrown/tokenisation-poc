@@ -1,3 +1,4 @@
+import os
 from os import listdir
 from os.path import isfile, join
 import configparser
@@ -54,32 +55,42 @@ def main():
     key_words = key_words.split(',')
 
     command_args = parse_args()
-    print('Looking in folder ({folder_name}) for tokenisable values'.format(folder_name = command_args['folder']))
+    search_folder = command_args['folder']
+    print('Looking in folder ({folder_name}) for tokenisable values'.format(folder_name = search_folder))
 
-    file_names = [f for f in listdir(DEFAULT_FOLDER_NAME) if isfile(join(DEFAULT_FOLDER_NAME, f))]
+    file_names = []
+    for root, dir, files in os.walk(search_folder):
+        print(dir)
+        print(files)
+
+        if not dir:
+            for file in files:
+                file_names.append(root + '/' + file)
+
     total_files = len(file_names)
     print('Found {} files to check'.format(total_files))
 
     found_count = 0
+    found_in_files = []
     for file_name in file_names:
-        key_name = DEFAULT_FOLDER_NAME + file_name
-        print('Checking file {}'.format(key_name))
-        with open(key_name) as json_data:
+        print('Checking file {}'.format(file_name))
+        with open(file_name) as json_data:
             schema = json.load(json_data)
-
-            print('Product is {}, version {}'.format(schema['productName'], schema['version']))
-
-            # check if "body" (lowercased) contains any of the keywords
-            payload = json.dumps(schema['structure'])
+            # json into string format
+            payload = json.dumps(schema)
             if any(keyword in payload.lower() for keyword in key_words):
                 print('Found keyword in schema!')
                 found_count += 1
+                found_in_files.append(file_name)
                 # tell me the specific key word found
                 for keyword in key_words:
                     if keyword in payload.lower():
                         print('Found {}'.format(keyword))
 
     print('Found keywords in {} of {} files'.format(found_count, total_files))
+    pprint(found_in_files)
+
+
 if __name__ == "__main__":
     main()
 

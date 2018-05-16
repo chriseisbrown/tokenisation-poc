@@ -22,6 +22,7 @@ def main():
     """ Main entry point of the app
         Find objects in S3 bucket that contain a prefix and are a particular object file name
     """
+    file_count = 0
     session = boto3.Session(profile_name=AWS_PROFILE_NAME )
     s3 = session.resource('s3')
 
@@ -39,15 +40,15 @@ def main():
             print(local_object_name)
             try:
                 make_directory(build_directory_name(local_object_name))
-
-                s3.Bucket(S3_BUCKET_NAME).download_file(object_summary.key, local_object_name)
+                my_bucket.download_file(object_summary.key, local_object_name)
+                file_count += 1
             except botocore.exceptions.ClientError as e:
                 if e.response['Error']['Code'] == "404":
                     print("The object does not exist.")
                 else:
                     print(e)
 
-    print('Done')
+    print('Done: downloaded {} schema files'.format(file_count))
 
 
 def find(f, seq):

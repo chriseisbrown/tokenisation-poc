@@ -6,6 +6,10 @@ import argparse
 import json
 from pprint import pprint
 
+"""
+    Inspects a folder of .json event schema and tries to match words form the config.ini file
+    in the body of teh schems.  Used to try and find PII fields in the schema.
+"""
 
 search_terms = {}
 KEY_WORDS = 'search_words'
@@ -44,11 +48,9 @@ def import_config(config_holder):
 
 
 def main():
-    print('Read config variables')
+    print('Reading config variables')
     # set up config variables
     import_config(search_terms)
-    for key in search_terms:
-        print(key)
 
     key_words = search_terms[KEY_WORDS]
     print('Looking for these words: {}'.format(key_words))
@@ -59,36 +61,42 @@ def main():
     print('Looking in folder ({folder_name}) for tokenisable values'.format(folder_name = search_folder))
 
     file_names = []
-    for root, dir, files in os.walk(search_folder):
-        print(dir)
-        print(files)
+    full_file_path = []
 
+    for root, dir, files in os.walk(search_folder):
         if not dir:
             for file in files:
-                file_names.append(root + '/' + file)
+                full_file_path.append(root + '/' + file)
+                file_names.append(file)
 
-    total_files = len(file_names)
+    total_files = len(full_file_path)
     print('Found {} files to check'.format(total_files))
 
     found_count = 0
-    found_in_files = []
-    for file_name in file_names:
-        print('Checking file {}'.format(file_name))
-        with open(file_name) as json_data:
+    found_in_file_paths = []
+    found_in_file_name = []
+
+    for file_path in full_file_path:
+        print('Checking file {}'.format(file_path))
+        with open(file_path) as json_data:
             schema = json.load(json_data)
             # json into string format
             payload = json.dumps(schema)
             if any(keyword in payload.lower() for keyword in key_words):
                 print('Found keyword in schema!')
                 found_count += 1
-                found_in_files.append(file_name)
+                found_in_file_paths.append(file_path)
+                found_in_file_name.append(file_names[full_file_path.index(file_path)])
                 # tell me the specific key word found
                 for keyword in key_words:
                     if keyword in payload.lower():
                         print('Found {}'.format(keyword))
 
     print('Found keywords in {} of {} files'.format(found_count, total_files))
-    pprint(found_in_files)
+    # full file path
+    pprint(found_in_file_paths)
+    # just the file name part
+    pprint(found_in_file_name)
 
 
 if __name__ == "__main__":

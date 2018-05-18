@@ -12,10 +12,15 @@ database = 'chrisb_dev'
 
 
 def make_partitions():
-    products = ['Bike','Car','Van','Home','Travel','Mobile','Other']
-    event_types = ['EmailDisclosureTracked']
-    days = ['01', '02', '03']
-    months = ['01']
+    """
+        Make a list of ALTER TABLE statements to add partitions for an Athena table
+        :return: list of statements
+    """
+    #products = ['Bike','Car','Van','Home','Travel','Mobile','Other']
+    products = ['Other']
+    event_types = ['ClaimOrderCreatedEvent']
+    days = ['01','02','03','04','05']
+    months = ['05']
     years = ['2018']
 
     partition_queries = []

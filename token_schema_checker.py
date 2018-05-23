@@ -8,7 +8,7 @@ from pprint import pprint
 
 """
     Inspects a folder of .json event schema and tries to match words form the config.ini file
-    in the body of teh schems.  Used to try and find PII fields in the schema.
+    in the body of the schemas.  Used to try and find PII fields in the schema.
 """
 
 search_terms = {}

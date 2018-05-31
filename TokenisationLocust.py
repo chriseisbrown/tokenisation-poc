@@ -33,23 +33,23 @@ def random_email_generator():
 
 class TokenisationTaskSet(TaskSet):
 
-    @task(1)
+    @task(2)
     def tokenisation_generate_string(self):
         random_string = random_string_generator(size=random.randint(10,50))
         print("executing tokenisation_generate_token {}".format(random_string))
         response = self.client.post("/tokenise", {"value": random_string})
         print(response.content)
 
-    @task(1)
+    @task(10)
     def tokenisation_generate_email(self):
         random_email = random_email_generator()
         print("executing tokenisation_generate_email {}".format(random_email))
         response = self.client.post("/tokenise", {"value": random_email})
         print(response.content)
 
-    @task(10)
+    @task(1)
     def tokenisation_generate_ISODate(self):
-        random_date = random_date_generator("2008-1-1 01:30:00", "2009-1-1 04:50:00", random.random())
+        random_date = random_date_generator("2008-01-01T01:30:00Z", "2009-01-01T04:50:00Z", random.random())
         print("executing tokenisation_generate_ISODate {}".format(random_date))
         response = self.client.post("/tokenise", {"value": random_date})
         print(response.content)

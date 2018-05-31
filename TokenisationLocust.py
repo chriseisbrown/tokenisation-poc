@@ -4,25 +4,24 @@ import string
 from locust import HttpLocust, TaskSet, task
 
 
-def strTimeProp(start, end, format, prop):
+def strTimeProp(start, end, format, proportion):
     """Get a time at a proportion of a range of two formatted times.
 
-    start and end should be strings specifying times formated in the
+    start and end should be strings specifying times formatted in the
     given format (strftime-style), giving an interval [start, end].
     prop specifies how a proportion of the interval to be taken after
     start.  The returned time will be in the specified format.
     """
-
     stime = time.mktime(time.strptime(start, format))
     etime = time.mktime(time.strptime(end, format))
 
-    ptime = stime + prop * (etime - stime)
+    ptime = stime + proportion * (etime - stime)
 
     return time.strftime(format, time.localtime(ptime))
 
 
-def random_date_generator(start, end, prop):
-    return strTimeProp(start, end, '%Y-%m-%dT%H:%M:%SZ', prop)
+def random_date_generator(start, end):
+    return strTimeProp(start, end, '%Y-%m-%dT%H:%M:%SZ', random.random())
 
 def random_string_generator(size=18, chars=string.ascii_letters + string.digits):
     return ''.join(random.choice(chars) for x in range(size))
@@ -49,7 +48,7 @@ class TokenisationTaskSet(TaskSet):
 
     @task(1)
     def tokenisation_generate_ISODate(self):
-        random_date = random_date_generator("2008-01-01T01:30:00Z", "2009-01-01T04:50:00Z", random.random())
+        random_date = random_date_generator("2008-01-01T01:30:00Z", "2018-05-31T04:50:00Z")
         print("executing tokenisation_generate_ISODate {}".format(random_date))
         response = self.client.post("/tokenise", {"value": random_date})
         print(response.content)
